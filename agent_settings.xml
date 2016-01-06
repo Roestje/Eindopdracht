@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<settings>
+    <port>8888</port>
+    <password>P@ssw0rd</password>
+    <logfile>agent_log.txt</logfile>
+</settings>

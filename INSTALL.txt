@@ -1,0 +1,8 @@
+Voor dit script zijn de volgende afhankelijkheden:
+- Python 3.4.4 of 3.5.1
+    - package socket
+    - package sys
+    - package time
+    - package psutils
+    - package hashlib
+    - package lxml

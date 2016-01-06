@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<settings>
+    <logfile>log_management.txt</logfile>
+    <host type="Windows">
+        <name>Agent 1</name>
+        <ip>127.0.0.1</ip>
+        <port>8888</port>
+        <tcp_password>P@ssw0rd</tcp_password>
+    </host>
+    <host type="Linux">
+        <name>Agent 2</name>
+        <ip>192.168.220.132</ip>
+        <port>8888</port>
+        <tcp_password>P@ssw0rd</tcp_password>
+    </host>
+</settings>
