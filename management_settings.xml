@@ -3,7 +3,7 @@
     <logfile>log_management.txt</logfile>
     <host type="Windows">
         <name>Agent 1</name>
-        <ip>127.0.0.1</ip>
+        <ip>192.168.220.131</ip>
         <port>8888</port>
         <tcp_password>P@ssw0rd</tcp_password>
     </host>

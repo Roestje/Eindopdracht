@@ -17,12 +17,20 @@ LOGFILE = tree.xpath('/settings/logfile/text()')[0]
 
 # Logging functie
 def WriteLog(LogLine):
+    """
+    Schrijft een regel in de log met timestamp ervoor
+    :param LogLine: Regel die in de log moet
+    """
     LogFile = open(LOGFILE,'a')
     Timestamp = time.strftime("%d-%m-%Y %H:%M:%S - ")
     LogFile.write(Timestamp + LogLine + "\r")
     LogFile.close()
 
 def conn_readline(c):
+    """
+    Stukje code van meneer Van Staveren wat ervoor zorgt dat er geen lege regels gelezen worden.
+    :param c: Open connectie van socket
+    """
     s = "";
     while not s.endswith('\n'):
         data = c.recv(1024)
@@ -30,6 +38,11 @@ def conn_readline(c):
     return s.rstrip()
 
 def hashString(s):
+    """
+    Deze functie hasht een string en geeft deze terug
+    :param s: String die een MD5 hash krijgt
+    :return: De gehashde string
+    """
     m = hashlib.md5()
     m.update(s.encode('utf-8'))
     return m.hexdigest()
@@ -39,6 +52,8 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 VerbindingSuccess = 0
 
 while VerbindingSuccess == 0:
+    # Zolang er geen verbinding succesvol is, proberen we PORT te gebruiken. Deze is in een XML config opgenomen,
+    # maar kan bij een mislukte verbinding handmatig aangepast worden d.m.v. input.
     try:
         s.bind(("", PORT))
         VerbindingSuccess = 1
@@ -67,15 +82,18 @@ while 1==1:
 
     try:
         while authenticatie == 0 and poging <= 3:
+            # Zolang er geen authenticatie plaatsvond en poging nog onder of gelijk aan 3 is, wordt het password gevraagd.
             conn.sendall(b'PASSWORD REQUIRED\r\n')
             data = conn_readline(conn)
 
             if data == wachtwoord and authenticatie == 0:
+                # Login succesvol
                 WriteLog("Er werd succesvol ingelogd door management")
                 authenticatie = 1
                 # De server meldt zich aan de client
                 conn.sendall(b'PASSWORD OK COMMAND LINE OPEN\r\n')
             else:
+                # Login niet succesvol
                 conn.sendall(b'PASS WRONG')
                 print("w:", wachtwoord, "d:", data)
                 conn.sendall(b'\r\n')
@@ -91,6 +109,7 @@ while 1==1:
     data = ""
     try:
         while authenticatie == 1:
+            # Zolang er een geldige authenticatie is, luisteren we naar de commando's van management.
             data = conn_readline(conn)
 
             if data == "stop":
@@ -102,6 +121,7 @@ while 1==1:
                 conn.sendall(str.encode(sys.platform))
                 WriteLog("Commando getPlatform gevraagd en " + sys.platform + " geantwoord")
             elif data == "getBootTime":
+                # Wanneer was deze machine opgestart?
                 bootTime = psutil.boot_time()
                 conn.sendall(str.encode(str(bootTime)))
                 WriteLog("Commando getBootTime gevraagd en " + str(bootTime) + " geantwoord")

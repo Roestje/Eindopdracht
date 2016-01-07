@@ -1,39 +1,46 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-# Hier beginnen we de webpagina
-print("Content-type: text/html;charset=utf-8\n")
-
 import socket
 import time
 import datetime
 import hashlib
 from lxml import etree
 import cgi, cgitb
-cgitb.enable()
 
+# Hier beginnen we de webpagina
+print("Content-type: text/html;charset=utf-8\n")
 print("<html>")
 print("<head>")
 print("<title>Management Python Eindopdracht</title>")
 print("</head>")
 print("<body>")
+print("<h1>Eindopdracht Python</h1>")
 
 # Importeer XML
 xml = "management_settings.xml"
 tree = etree.parse(xml)
 
-# Vul objecten in variabel
+# Vul objecten uit XML in variabel
 alleHosts = tree.xpath('/settings/host')
 logfile = tree.xpath('/settings/logfile')[0].text
 
 #logging functie
 def WriteLog(LogLine):
+    """
+    Schrijft een regel in de log met timestamp ervoor
+    :param LogLine: Regel die in de log moet
+    """
     LogFile = open(logfile,'a')
     Timestamp = time.strftime("%d-%m-%Y %H:%M:%S - ")
     LogFile.write(Timestamp + LogLine) # \r stond hier ook.
     LogFile.close()
 
 def conn_readline(c):
+    """
+    Stukje code van meneer Van Staveren wat ervoor zorgt dat er geen lege regels gelezen worden.
+    :param c: Open connectie van socket
+    """
     s = "";
     while not s.endswith('\n'):
         data = c.recv(1024)
@@ -41,10 +48,17 @@ def conn_readline(c):
     return s.rstrip()
 
 def hashString(s):
+    """
+    Deze functie hasht een string en geeft deze terug
+    :param s: String die een MD5 hash krijgt
+    :return: De gehashde string
+    """
     m = hashlib.md5()
     m.update(s.encode('utf-8'))
     return m.hexdigest()
 
+# We lopen door alleHosts heen en gebruiken de info die is verkregen uit het XML bestand
+# Om te verbinden met die hosts. Lukt dit niet, dan gaan we verder met de volgende.
 for host in alleHosts:
     name = host[0].text
     hostname = host[1].text
@@ -57,7 +71,6 @@ for host in alleHosts:
 
         WriteLog("Verbinding maken met " + hostname + " op poort " + str(port) + " gelukt")
 
-        print("<h1>Eindopdracht Python</h1>")
         print("<h2>" + name + "</h2>")
 
         #welkomstbericht
@@ -115,6 +128,7 @@ for host in alleHosts:
         time.sleep(0.01)
     except:
         WriteLog("Verbinding maken met " + hostname + " op poort " + str(port) + " niet gelukt")
+        print("Verbinding maken met " + hostname + " op poort " + str(port) + " niet gelukt<br />")
 
 # Einde webpagina
 print("</body>")

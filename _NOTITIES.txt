@@ -1,0 +1,63 @@
+Basisinfo:
+- 2 scripts minimaal
+- verschillende (virtuele) machines
+- Code met commentaar en goed leesbaar
+- INSTALL.txt (fresh install Windows)
+- Geen plagiaat
+
+Minimaal:
+- Surf naar management scripts
+- Vraag counters op van één agent
+- Ook counters via Powershell
+	- Beschikbaar Geheugen
+	- Eerste beschikbare IP adres
+	- Vrije ruimte op C:
+	- Uptime in dagen
+- Presenteer het resultaat bruikbaar en overzichtelijk
+- Minstens 1 script bruikbare logging
+- try/except
+- CSV file management verkregen gegevens
+- Config uit configuratiefile
+
+Bonus:
+- Database gebruiken
+- Object Georiënteerd (deel van) code
+- Eigen toevoeging
+	- MD5 wachtwoord
+- Eigen client-server communicatie
+- Informatie als grafiek
+
+Beoordeling:
+- Deliverables zijn door de student tijdig opgeleverd, dwz ten minste: (0-10)
+	o scripts (minimaal twee),
+	o configuratiefile (minimaal één),
+	o Handleiding: UML + Installatiebeschrijving.
+
+- Code is goed geschreven, dat wil zeggen: (0-10)
+	o Niet onnodig complex.
+	o Op de juiste plaatsen voorzien van voldoende white spaces en newlines.
+	o Voorzien van zinvol commentaar in het script.
+	o Goede foutafhandeling waar nodig.
+	o Creativiteit/elegantie van de oplossing.
+	
+- Het script werkt correct, tijdens het assessment dwz: (0-30)
+	o De scripts functioneren zonder fouten **
+	o De webpagina(‘s) zijn aanwezig en functioneel.
+	o Counters kunnen worden opgevraagd.
+	o Resultaat wordt goed gepresenteerd op de webpagina.
+	o Gevonden resultaten worden geëxporteerd in een CSV-file.
+	o De configuratie komt uit een configuratie-file.
+	o Er is logging.
+	o Er wordt gebruik gemaakt van minimaal de verplichte PowerShell
+	functionaliteit.
+	o Studenten kunnen eventuele vragen over de scripts beantwoorden.
+
+- Optionele onderdelen (0-10 punten per onderdeel) zijn aanwezig ***: (0-50)
+	o Er wordt (zinvol) gebruik gemaakt van een database.
+	o De code is (deels) object georiënteerd.
+	o Maak gebruik van online versiebeheersysteem: github of subversion.
+	o Gevonden resultaten worden getoond in een grafiek in website.
+	o Student heeft een of meer eigen toevoegingen bedacht.
+	o Student heeft een ander client-server communicatie protocol
+	geïmplementeerd.
+	o Er wordt gebruik gemaakt van een XML-configuratie file.
