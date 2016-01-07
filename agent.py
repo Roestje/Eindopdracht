@@ -104,7 +104,7 @@ while 1==1:
             elif data == "getBootTime":
                 bootTime = psutil.boot_time()
                 conn.sendall(str.encode(str(bootTime)))
-                WriteLog("Commando getFreeRam gevraagd en " + str(bootTime) + " geantwoord")
+                WriteLog("Commando getBootTime gevraagd en " + str(bootTime) + " geantwoord")
             elif data == "getFreeRam":
                 # vraag alle gegevens over RAM op
                 vmem = psutil.virtual_memory()

@@ -1,8 +1,22 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+# Hier beginnen we de webpagina
+print("Content-type: text/html;charset=utf-8\n")
+
 import socket
 import time
 import datetime
 import hashlib
 from lxml import etree
+import cgi, cgitb
+cgitb.enable()
+
+print("<html>")
+print("<head>")
+print("<title>Management Python Eindopdracht</title>")
+print("</head>")
+print("<body>")
 
 # Importeer XML
 xml = "management_settings.xml"
@@ -16,7 +30,7 @@ logfile = tree.xpath('/settings/logfile')[0].text
 def WriteLog(LogLine):
     LogFile = open(logfile,'a')
     Timestamp = time.strftime("%d-%m-%Y %H:%M:%S - ")
-    LogFile.write(Timestamp + LogLine + "\r")
+    LogFile.write(Timestamp + LogLine) # \r stond hier ook.
     LogFile.close()
 
 def conn_readline(c):
@@ -43,49 +57,54 @@ for host in alleHosts:
 
         WriteLog("Verbinding maken met " + hostname + " op poort " + str(port) + " gelukt")
 
-        print(name)
+        print("<h1>Eindopdracht Python</h1>")
+        print("<h2>" + name + "</h2>")
 
         #welkomstbericht
         data = conn_readline(s)
-        print(data)
+        #print(data)
         #wachtwoord melding
         data = conn_readline(s)
-        print(data)
+        #print(data)
         #stuur wachtwoord mee
         wachtwoord = hashString(wachtwoord)
-        s.send(bytes(wachtwoord, 'utf-8') + b"\r\n")
+        s.send(bytes(wachtwoord, 'utf-8') + b"\n")
         data = conn_readline(s)
-        print(data)
+        #print(data)
+
+        print("<table>")
 
         #getPlatform
-        s.send(b"getPlatform\r\n")
+        s.send(b"getPlatform\n")
         platform = conn_readline(s)
-        print(platform)
+        print("<tr><th>Platform:</th><td>" + str(platform) + "</td></tr>")
 
         #getBootTime
-        s.send(b"getBootTime\r\n")
-        bootTime = conn_readline(s)
-        bootTime = datetime.datetime.fromtimestamp(float(bootTime)).strftime("%d-%m-%Y %H:%M:%S")
-        print(bootTime)
+        #s.send(b"getBootTime\n")
+        #bootTime = conn_readline(s)
+        #bootTime = datetime.datetime.fromtimestamp(float(bootTime)).strftime("%d-%m-%Y %H:%M:%S")
+        #print(bootTime)
 
         #getFreeRam
-        s.send(b"getFreeRam\r\n")
+        s.send(b"getFreeRam\n")
         freeRam = round(float(conn_readline(s)))
-        print(freeRam, "MB vrije RAM")
+        print("<tr><th>Vrije RAM:</th><td>" + str(freeRam) + "MB</td></tr>")
 
         #getCpuCount
-        s.send(b"getCpuCount\r\n")
+        s.send(b"getCpuCount\n")
         cpuCount = conn_readline(s)
-        print(cpuCount, "CPU's aanwezig")
+        print("<tr><th>Aantal CPU's:</th><td>" + str(cpuCount) + "CPU's</td></tr>")
 
         #getCpuPercentage
-        s.send(b"getCpuPercentage\r\n")
+        s.send(b"getCpuPercentage\n")
         cpuPercentage = conn_readline(s)
-        print(cpuPercentage, "%")
+        print("<tr><th>CPU gebruik:</th><td>" + str(cpuPercentage) + "%</td></tr>")
+
+        print("</table>")
 
         #probeer de overkant te overtuigen dat de verbinding gesloten mag worden
         try:
-            s.send(b"stop\r\n")
+            s.send(b"stop\n")
         #dit gaat sowieso mis als verbinding verbroken in dit script, dus vangen we dit af en sluiten deze socket netjes af voor hergebruik.
         except:
             s.close()
@@ -97,5 +116,6 @@ for host in alleHosts:
     except:
         WriteLog("Verbinding maken met " + hostname + " op poort " + str(port) + " niet gelukt")
 
-
-
+# Einde webpagina
+print("</body>")
+print("</html>")
