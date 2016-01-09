@@ -179,10 +179,10 @@ while 1==1:
                         curdir + '\\vrijeruimtec.ps1'],  # Naam van en pad naar je PowerShell script
                         stdout=subprocess.PIPE)                  # Zorg ervoor dat je de STDOUT kan opvragen.
                         output = p.stdout.read().rstrip().lstrip().decode('utf-8') # De stdout met strips en decoder om het een leesbaar getal te maken
-                        freeram = int(output) / 1024 #zet het om naar MB
+                        freeSpace = round(int(output) / 1024 / 1024) #zet het om naar MB
 
-                        conn.sendall(str.encode(str(freeram)))
-                        WriteLog("Commando getFreeRam met PowerShell gevraagd en " + str(freeram) + " geantwoord")
+                        conn.sendall(str.encode(str(freeSpace) + " MB"))
+                        WriteLog("Commando getFreeSpace met PowerShell gevraagd en " + str(freeSpace) + " geantwoord")
 
 
                 if platform.startswith('linux'):
@@ -203,6 +203,11 @@ while 1==1:
 
                         conn.sendall(str.encode(str(ipAddress)))
                         WriteLog("Commando getIp gevraagd en " + str(ipAddress) + " geantwoord")
+                    elif data == "getFreeSpace":
+                        freeSpace = "Niet voor Linux"
+
+                        conn.sendall(str.encode(str(freeSpace)))
+                        WriteLog("Commando getFreeSpace gevraagd en " + str(freeSpace) + " geantwoord")
 
 
             conn.sendall(b'\r\n')

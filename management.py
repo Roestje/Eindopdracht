@@ -189,6 +189,12 @@ for row in mysqlResult:
             if ip != "":
                 print("<tr><th>IP Adres:</th><td>" + str(ip) + "</td></tr>")
 
+            #getFreeSpace
+            s.send(b"getFreeSpace\n")
+            freeSpace = conn_readline(s)
+            if freeSpace != "":
+                print("<tr><th>Vrije ruimte C:</th><td>" + str(freeSpace) + "</td></tr>")
+
             print("</table>")
 
             csvWriter.writerow((datetime.datetime.now().strftime('%H:%M:%S'), name, platform, bootDays, freeRam, cpuCount, cpuPercentage, ip))
