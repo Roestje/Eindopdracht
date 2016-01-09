@@ -79,6 +79,9 @@ print("</select>")
 print("<input type=\"submit\"/>")
 print("</form>")
 
+print("<h2>Nieuwe Agent</h2>")
+print("<a href=\"newagent.py\">Klik hier om een nieuwe agent toe te voegen</a>")
+
 # Einde webpagina
 print("</body>")
 print("</html>")

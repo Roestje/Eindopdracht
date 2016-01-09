@@ -52,7 +52,7 @@ csvfile = curdir + "/" + csvfileprefix + "_" + str(datetime.datetime.now().strft
 # Maak een CSV dialect aan, ; in dit geval, Nederlands dus
 csv.register_dialect('semicolon', delimiter=';')
 
-# Controleer of bestand al bestaat, dit heeft te maken met titelkolom
+# Controleer of bestand al bestaat, dit heeft te maken met titelrij
 if os.path.isfile(csvfile):
     csvExists = 1
 else:
@@ -62,7 +62,7 @@ else:
 newCsv = open(csvfile, 'at', newline="")
 csvWriter = csv.writer(newCsv, dialect='semicolon')
 
-# Als het csv bestand niet bestaat, dan drukken we titels af
+# Als het csv bestand niet bestaat, dan drukken we titelrij af
 if csvExists == 0:
     csvWriter.writerow(('Tijdstip', 'Agentnaam', 'Platform', 'Utime (dagen)', 'RAM vrij (MB)', 'CPU aantal', 'CPU belasting (%)', 'IP'))
 
