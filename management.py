@@ -9,27 +9,31 @@ from lxml import etree
 import cgi, cgitb
 import csv
 import os
-
-# Hier beginnen we de webpagina
-print("Content-type: text/html;charset=utf-8\n")
-print("<html>")
-print("<head>")
-print("<title>Management Python Eindopdracht</title>")
-print("</head>")
-print("<body>")
-print("<h1>Eindopdracht Python</h1>")
+import pymysql
 
 # Importeer XML
 xml = "management_settings.xml"
 tree = etree.parse(xml)
 
 # Vul objecten uit XML in variabel
-allHosts = tree.xpath('/settings/host')
 logfile = tree.xpath('/settings/logfile')[0].text
 csvfileprefix = tree.xpath('/settings/csvfileprefix')[0].text
+mysqlHost = tree.xpath('/settings/mysql/host')[0].text
+mysqlPort = int(tree.xpath('/settings/mysql/port')[0].text)
+mysqlUser = tree.xpath('/settings/mysql/user')[0].text
+mysqlPassword = tree.xpath('/settings/mysql/password')[0].text
+mysqlDatabase = tree.xpath('/settings/mysql/database')[0].text
 
+# MySQL verbinding configureren
+mysqlConn = pymysql.connect(host=mysqlHost, port=mysqlPort, user=mysqlUser, passwd=mysqlPassword, db=mysqlDatabase)
+mysqlCur = mysqlConn.cursor(pymysql.cursors.DictCursor)
+
+# We vragen alle agents op
+mysqlCur.execute("SELECT * FROM agents")
+mysqlResult = mysqlCur.fetchall()
 
 curdir = "/var/www/pythonserver"
+curdir = os.path.curdir
 csvfile = curdir + "/" + csvfileprefix + "_" + str(datetime.datetime.now().strftime('%Y-%m-%d')) + ".csv"
 
 # Maak een CSV dialect aan, ; in dit geval, Nederlands dus
@@ -81,14 +85,23 @@ def hashString(s):
     m.update(s.encode('utf-8'))
     return m.hexdigest()
 
+# Hier beginnen we de webpagina
+print("Content-type: text/html;charset=utf-8\n")
+print("<html>")
+print("<head>")
+print("<title>Management Python Eindopdracht</title>")
+print("</head>")
+print("<body>")
+print("<h1>Eindopdracht Python</h1>")
+
 # We lopen door alleHosts heen en gebruiken de info die is verkregen uit het XML bestand
 # Om te verbinden met die hosts. Lukt dit niet, dan gaan we verder met de volgende.
-for host in allHosts:
-
-    name = host[0].text
-    hostname = host[1].text
-    port = int(host[2].text)
-    password = host[3].text
+for row in mysqlResult:
+    id = int(row["agent_id"])
+    name = row["agent_name"]
+    hostname = row["agent_ip"]
+    port = int(row["agent_port"])
+    password = row["agent_password"]
 
     WriteLog("Probeer verbinding met " + hostname + " op poort " + str(port))
 
@@ -106,7 +119,7 @@ for host in allHosts:
         print("Verbinding maken met " + hostname + " op poort " + str(port) + " niet gelukt<br />")
 
     if connectionSucceed == 1:
-        try:
+        #try:
             WriteLog("Verbinding maken met " + hostname + " op poort " + str(port) + " gelukt")
 
             #welkomstbericht
@@ -167,6 +180,11 @@ for host in allHosts:
 
             csvWriter.writerow((datetime.datetime.now().strftime('%H:%M:%S'), name, platform, bootDays, freeRam, cpuCount, cpuPercentage, ip))
 
+            timestamp = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            valueTuple = (int(id), timestamp, platform, bootDays, freeRam, cpuCount, cpuPercentage, ip)
+            mysqlCur.execute('INSERT INTO checks (check_agent_id, check_timestamp, check_platform, check_uptime, check_freeram, check_cpucount, check_cpupercentage, check_ip) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', valueTuple)
+            mysqlConn.commit()
+
             # Probeer de overkant te overtuigen dat de verbinding gesloten mag worden
             try:
                 s.send(b"stop\n")
@@ -178,14 +196,16 @@ for host in allHosts:
 
             #ik moet de overkant de kans geven de verbinding te resetten. (t.b.v. testen 2x localhost)
             #time.sleep(0.001)
-        except:
+        #except:
             WriteLog("Er is een fout opgetreden tijdens het ophalen van de counters")
 
-        s = None #even netjes opruimen voor de volgende
+            s = None #even netjes opruimen voor de volgende
 
 # Einde webpagina
 print("</body>")
 print("</html>")
+
+mysqlConn.close()
 
 #csvfile sluiten
 newCsv.close()
