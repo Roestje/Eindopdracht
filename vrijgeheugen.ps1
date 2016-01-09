@@ -1,0 +1,1 @@
+Get-WmiObject -class win32_operatingsystem | select FreePhysicalMemory | ft -hidetableheaders

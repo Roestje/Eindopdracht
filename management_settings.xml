@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <settings>
     <logfile>log_management.txt</logfile>
+    <csvfileprefix>management_run</csvfileprefix>
     <host type="Windows">
         <name>Agent 1</name>
         <ip>192.168.220.131</ip>

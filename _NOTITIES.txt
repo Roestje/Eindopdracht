@@ -10,7 +10,7 @@ Minimaal:
 - Vraag counters op van één agent
 - Ook counters via Powershell
 	- Beschikbaar Geheugen
-	- Eerste beschikbare IP adres
+	- Eerste beschikbare IP adres 
 	- Vrije ruimte op C:
 	- Uptime in dagen
 - Presenteer het resultaat bruikbaar en overzichtelijk
