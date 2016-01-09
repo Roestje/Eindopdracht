@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+# Import hier, import daar, import overal
 import socket
-import sys
 import datetime
 import hashlib
 from lxml import etree
@@ -15,7 +15,7 @@ import pymysql
 xml = "management_settings.xml"
 tree = etree.parse(xml)
 
-# Vul objecten uit XML in variabel
+# Vul objecten uit XML file in variabelen
 logfile = tree.xpath('/settings/logfile')[0].text
 csvfileprefix = tree.xpath('/settings/csvfileprefix')[0].text
 mysqlHost = tree.xpath('/settings/mysql/host')[0].text
@@ -28,11 +28,24 @@ mysqlDatabase = tree.xpath('/settings/mysql/database')[0].text
 mysqlConn = pymysql.connect(host=mysqlHost, port=mysqlPort, user=mysqlUser, passwd=mysqlPassword, db=mysqlDatabase)
 mysqlCur = mysqlConn.cursor(pymysql.cursors.DictCursor)
 
-# We vragen alle agents op
-mysqlCur.execute("SELECT * FROM agents")
-mysqlResult = mysqlCur.fetchall()
+# Debuggen/foutmeldingen
+cgitb.enable()
+# Vul alles uit get in form
+form = cgi.FieldStorage()
 
-curdir = "/var/www/pythonserver"
+agent_id = form.getvalue("agent")
+
+# Agent uit get is '0' als ze allemaal opgehaald worden, maar als er geen get is ook allemaal ophalen
+if(agent_id == None or agent_id == '0'):
+    # We vragen alle agents op
+    mysqlCur.execute("SELECT * FROM agents")
+    mysqlResult = mysqlCur.fetchall()
+else:
+    # We vragen alle agents op
+    mysqlCur.execute("SELECT * FROM agents WHERE agent_id = %s", (agent_id))
+    mysqlResult = mysqlCur.fetchall()
+
+#curdir = "/var/www/pythonserver"
 curdir = os.path.curdir
 csvfile = curdir + "/" + csvfileprefix + "_" + str(datetime.datetime.now().strftime('%Y-%m-%d')) + ".csv"
 
@@ -119,7 +132,7 @@ for row in mysqlResult:
         print("Verbinding maken met " + hostname + " op poort " + str(port) + " niet gelukt<br />")
 
     if connectionSucceed == 1:
-        #try:
+        try:
             WriteLog("Verbinding maken met " + hostname + " op poort " + str(port) + " gelukt")
 
             #welkomstbericht
@@ -196,11 +209,12 @@ for row in mysqlResult:
 
             #ik moet de overkant de kans geven de verbinding te resetten. (t.b.v. testen 2x localhost)
             #time.sleep(0.001)
-        #except:
+        except:
             WriteLog("Er is een fout opgetreden tijdens het ophalen van de counters")
 
-            s = None #even netjes opruimen voor de volgende
+        s = None #even netjes opruimen voor de volgende
 
+print("<a href=\"index.py\">Kies andere agent</a>")
 # Einde webpagina
 print("</body>")
 print("</html>")

@@ -32,7 +32,41 @@ print("</head>")
 print("<body>")
 print("<h1>Eindopdracht Python</h1>")
 print("Welkom, kies hieronder een agent uit om de gegevens op te vragen.<br /><br />")
+
+# Live data
+print("<h2>Live</h2>")
 print("<form action=\"management.py\" method=\"get\">")
+
+# We vragen alle agents op
+mysqlCur.execute("SELECT agent_id, agent_name FROM agents")
+mysqlResult = mysqlCur.fetchall()
+print("<select name=\"agent\">")
+print ("<option value=\"%s\">%s</option>" % (str(0), "Allemaal"))
+for row in mysqlResult:
+    print ("<option value=\"%s\">%s</option>" % (row["agent_id"], row["agent_name"]))
+print("</select>")
+print("<input type=\"submit\"/>")
+print("</form>")
+
+
+# Grafiekgeschiedenis
+print("<h2>Grafiekgeschiedenis</h2>")
+print("<form action=\"graph.py\" method=\"get\">")
+
+# We vragen alle agents op
+mysqlCur.execute("SELECT agent_id, agent_name FROM agents")
+mysqlResult = mysqlCur.fetchall()
+print("<select name=\"agent\">")
+print ("<option value=\"%s\">%s</option>" % (str(0), "Allemaal"))
+for row in mysqlResult:
+    print ("<option value=\"%s\">%s</option>" % (row["agent_id"], row["agent_name"]))
+print("</select>")
+print("<input type=\"submit\"/>")
+print("</form>")
+
+# Tabelgeschiedenis
+print("<h2>Tabelgeschiedenis</h2>")
+print("<form action=\"table.py\" method=\"get\">")
 
 # We vragen alle agents op
 mysqlCur.execute("SELECT agent_id, agent_name FROM agents")
